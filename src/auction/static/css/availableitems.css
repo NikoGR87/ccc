@@ -1,0 +1,11 @@
+body {                           padding-left: 15px;    /* Moves the data 15px to the left */                                 
+
+}                              
+
+h1, h2 {               /* Change font and color in the headers */   
+
+color: #C25100;    /* h1 and h2 header color */            
+
+font-family: 'Verdana';    /* Change font to Verdana */ 
+
+}
