@@ -28,14 +28,8 @@ class ItemsForm(forms.Form):
         
     item_description = forms.CharField()
     
-    item_owner = forms.CharField()
-
-    #
     auction_bidding_price = forms.IntegerField()
-    
-    
-    
-    #auction_expiration_time = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'], help_text="(Day/Month/Year Hour:Min)")
-    
-    
-    
+
+class ItemsFilterForm(forms.Form):
+
+    select_user = forms.CharField()

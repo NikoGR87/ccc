@@ -27,7 +27,7 @@ class ItemsSerializer(serializers.ModelSerializer):
       
        model = Items
       
-       fields = ('item_title','status','item_description','auction_expiration_time','item_owner')
+       fields = ('item_title','time_stamp','status','item_description','auction_expiration_time','item_owner')
        
 class AuctionsSerializer(serializers.ModelSerializer): 
     

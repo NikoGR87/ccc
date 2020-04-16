@@ -1,21 +1,8 @@
 from django.db import models
-
-# Create your models here.
-
-#####
 from django.contrib.auth.models import User
-
 from datetime import datetime 
-
-#####
-
 from django.core import validators
-
 from django.core.exceptions import ValidationError
-
-#class User(models.Model):
-
-#    username = models.CharField(max_length=60)
 
 class Items(models.Model): 
 
@@ -42,7 +29,7 @@ class Items(models.Model):
 class Auctions(models.Model): 
         
     STATUS_AUCTIONS_CHOICES = ( 
-            ('OPEN', 'Open'), 
+            ('OFFERS', 'Offers'), 
             ('COMPLETED', 'Completed'),  
         )    
        

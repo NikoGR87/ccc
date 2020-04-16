@@ -5,19 +5,28 @@
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstraptheme.min.css"> 
         <link rel="stylesheet" type="text/css" href="{% static 'css/myapp.css' %}"> 
     </head> 
-<body> 
-<div> <h1> Items </h1> </div> 
+	
+	<body> 
+		
+		<div> <h1> Items </h1> </div> 
 
-{% for item in items %} 
+		<form method = "GET"> 
+		{{ form }} 
+		<input type = "submit" value = "Find"> 
+		</form> 
+		
+		{% for item in items%} 
+		 
 
-Title: {{item.name}} <BR> 
+		Title: {{item.item_title}} <BR> 
 
-Status: {{item.status}} <BR> 
+		Status: {{item.status}} <BR> 
 
-Description: {{item.item_description}} <BR> 
+		Description: {{item.item_description}} <BR> 
 
-Owner: {{item.item_owner}} <BR><BR> 
+		Owner: {{item.item_owner}} <BR><BR> 
 
-{% endfor %} 
+		{% endfor %}
 
-</body>
+	</body>
+<html>
