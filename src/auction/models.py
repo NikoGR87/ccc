@@ -50,6 +50,8 @@ class Auctions(models.Model):
     
     item_id = models.ForeignKey(Items, on_delete=models.CASCADE)
     
+    item_name = models.CharField(max_length=60,default='')
+    
     bids = models.IntegerField()
     
 class Bidding(models.Model):
@@ -61,6 +63,8 @@ class Bidding(models.Model):
     item_id = models.ForeignKey(Items,on_delete=models.CASCADE)
     
     bidding_time = models.DateTimeField(default=datetime.now)
+    
+    item_name = models.CharField(max_length=60,default='')
     
 class Monitoring(models.Model):
 

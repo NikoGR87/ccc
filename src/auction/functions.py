@@ -1,15 +1,8 @@
 from auction.models import Auctions, Bidding, Items
-
 from django.utils import timezone
-
 from datetime import datetime, timedelta
-
-
 from django.contrib.auth.models import User
-
 from django.contrib.auth import authenticate
-
-
 
 def increase_bid(user, auction):
       
@@ -42,9 +35,3 @@ def validate_login(username, password):
     else:
         return False
 
-def populate_item(itemtitle,itemdescription,itemowner):
-    a = Items()
-    a.item_title = itemtitle
-    a.item_description = itemdescription
-    a.item_owner = itemowner   
-    a.save()

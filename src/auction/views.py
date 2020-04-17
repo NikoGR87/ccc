@@ -13,13 +13,11 @@ from rest_framework import viewsets
 from .models import Items, Auctions, Bidding, Monitoring
 from .serializers import ItemsSerializer, AuctionsSerializer, BiddingSerializer, MonitoringSerializer 
 from django.contrib import messages
-import requests
-
 from django.core import serializers
-
-
 from django.core import validators
 from django.core.exceptions import ValidationError
+
+import requests
 
 class ItemsViewSet(viewsets.ModelViewSet):
     
@@ -62,8 +60,6 @@ def index(request):
                 
                 monitoring = list(chain(monitoring, a))
 
-            #userDetails = UserDetails.objects.get(user_id=user.id)
-        
             return render(request, 'index.html',{'auctions': auctions, 'user': user,'monitoring': monitoring})
     
     except KeyError:
@@ -106,11 +102,7 @@ def bid_page(request, auction_id):
                 stats.append(winner[0].username)
             else:
                 stats.append(None)
-
-            # Fourth element in stats list
-            #chat = Chat.objects.all().order_by('time_sent')
-            #stats.append(chat)
-
+       
             # Getting user's monitoring.
             w = Monitoring.objects.filter(user_id=user[0])
             monitoring = Auctions.objects.none()
@@ -237,15 +229,13 @@ def filter_auctions(request, category):
             for item in m:
                 a = Auctions.objects.filter(id=item.auction_id.id)
                 monitoring = list(chain(monitoring, a))
-            print(1)
-            return render(request, 'index.html', {'auctions': f_auctions, 'user': user[0], 'monitoring': monitoring})
-    #return render(request, 'index.html', {'auctions': f_auctions, 'monitoring': monitoring})
+            
+            return render(request, 'index.html', {'auctions': f_auctions, 'user': user[0], 'monitoring': monitoring})   
     except:
         return render(request, 'index.html', {'auctions': f_auctions})
 
     return index(request)            
 
-        
 def login_page(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -271,25 +261,6 @@ def registration_page(request):
     
     return render(request, 'registration.html')
     
-"""def registration(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            is_valid = validate_registration(
-                form.cleaned_data['username'],
-                form.cleaned_data['password1'],    
-            )
-            if is_valid:
-                # Create an User object with the form parameters.
-                user = User.objects.create_user(username=form.cleaned_data['username'],                                                
-                                                password=form.cleaned_data['password1'])                
-                user.save()  # Save the object to the database.
-                #userDetails = UserDetails()
-                #userDetails.user_id = user
-                #userDetails.save()
-    return index(request)"""
-    
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def registration(request):
@@ -360,18 +331,23 @@ def items_page(request):
         placeholder4 = ''
         placeholder5 = ''
         form = ItemsForm(initial={'item_title': placeholder1,'item_description': placeholder2,'item_owner ': placeholder3,'status':placeholder4,'auction_bidding_price':placeholder5})  
-    
-    
+       
+    if request.session['username']:
+            user = User.objects.get(username=request.session['username'])
     
     context = {
         'form': form,
         'item': item,
+        'user': user
     }        
 
     return render(request, 'items.html',context)
      
 def availableitems(request): 
      
+    if request.session['username']:
+            user = User.objects.get(username=request.session['username'])
+    
     form = ItemsFilterForm()
     if form.is_valid():
         test = form.cleaned_data['select_user']
@@ -390,50 +366,53 @@ def availableitems(request):
         context = {
             'form': form,
             'items': items_list,
+            'user': user
         }
     else:
         context = {
             'form': form,
+            'user': user
         }
         
     return render(request, 'availableitems.html',context)
 
 
 def itemssold_page(request):
+       
+    if request.session['username']:
+            user = User.objects.get(username=request.session['username'])
     
     
     
+    t = Auctions.objects.filter(time_left__lte = datetime.now(), auction_status="OFFERS")    
+    for a in t:        
+        i = Items.objects.filter(id=a.item_id.id).values('item_title')       
+        a.item_name = i
+        a.auction_status = "COMPLETED" # change field
+        a.save() # this will update only
     
+ 
+    b = Auctions.objects.filter(auction_status="COMPLETED")        
     
-    
-    
-    f_auctions = []
-    
-    f_auctions = Auctions.objects.filter(
-        time_left__gte=datetime.now(), auction_status="COMPLETED"
-        ).order_by('time_start')
+    return render(request, 'itemssold.html',{'auctions': b,'user': user})
    
-    try:
-        if request.session['username']:
-            auctions = Auctions.objects.filter(time_left__gte=datetime.now()).order_by('time_start')
-            user = User.objects.filter(username=request.session['username'])
-
-            m = Monitoring.objects.all()
-            monitoring = Auctions.objects.none()
-            for item in m:
-                a = Auctions.objects.filter(id=item.auction_id.id)
-                monitoring = list(chain(monitoring, a))
-            print(1)
-            return render(request, 'index.html', {'auctions': f_auctions, 'user': user[0], 'monitoring': monitoring})
-   
-    except:
-        return render(request, 'index.html', {'auctions': f_auctions})
-
-    return index(request) 
-    
 def historicalbids_page(request):
 
-    return index(request) 
+    if request.session['username']:
+            user = User.objects.get(username=request.session['username'])
+    
+    usercondition = request.session['username']
+    
+    biddings = Bidding.objects.filter(user_id = user.id)
+    for a in biddings:
+        i = Items.objects.filter(id=a.item_id.id).values('item_title') 
+        a.item_name = i 
+        a.save() # this will update only
+    
+    bidel = Bidding.objects.filter(user_id = user.id)
+    
+    
+    return render(request,'historicalbids.html',{'bidding':bidel,'user': user}) 
 
 
     

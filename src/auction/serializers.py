@@ -1,17 +1,7 @@
 from rest_framework import serializers 
-
-#from .models import User
-
 from django.contrib.auth.models import User
+from .models import Items, Auctions, Bidding, Monitoring 
 
-
-from .models import Items
-
-from .models import Auctions
-
-from .models import Bidding 
-
-from .models import Monitoring
 
 class UserSerializer(serializers.ModelSerializer):
    
@@ -35,7 +25,7 @@ class AuctionsSerializer(serializers.ModelSerializer):
     
         model = Auctions
         
-        fields = ('auction_bidding_price', 'user_bidding','auction_status','time_start','time_left','auction_winner','item_id','bids') 
+        fields = ('auction_bidding_price', 'user_bidding','auction_status','time_start','time_left','auction_winner','item_id','bids','item_name') 
 
 
 class BiddingSerializer(serializers.ModelSerializer):
@@ -44,7 +34,7 @@ class BiddingSerializer(serializers.ModelSerializer):
       
        model = Bidding
       
-       fields = ('auction_id','user_id','item_id')
+       fields = ('auction_id','user_id','item_id','bidding_time','item_name')
        
 class MonitoringSerializer(serializers.ModelSerializer):
    

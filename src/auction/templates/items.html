@@ -1,23 +1,76 @@
 <!DOCTYPE html>
 <html>
-	<body>
-	{% block content %}
-	<form action="" method="post">
-	{% csrf_token %}
-	<table>
-	{{ form.as_table }}
-	</table>
-	<input type="submit" value="Submit">
-	</form>
-	{% endblock %}
+<head>
+    <title>Auctions Online - Create Item and Auction</title>
+    <style>
+        #reg { margin-top : 20px; }
+        #subbut {margin-top: 20px; margin-left: 152px;}
+        .frm { margin-top: -15px; }
+    </style>
+</head>	
+<body>
+{% extends 'index.html' %}
+{% block body %}
+    <div id="reg">
+    <div>
+        <h2>Create Item and Auction</h2>
+        <hr>
+    </div>	
 	
-	{% if messages %}
-	<ul class="messages">
-		{% for message in messages %}
-		<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-		{% endfor %}
-	</ul>
-	{% endif %}
-	
-	</body>
+	<form method="post" action="/auction/items/">{% csrf_token %}
+    <div class="row">
+        <div class="col-sm-6">
+            
+			<div class="form-group row">
+                <label class="col-sm-8 col-form-label frm">Item Title</label>
+                <div class="input-group col-sm-10">
+                    <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i></div>
+                    <input id="item_title" class="form-control" type="text" name="item_title" maxlength="60" required />
+                </div>                
+            </div>
+            
+			
+			<div class="form-group row">
+                <label class="col-sm-8 col-form-label frm" for="group1B">Status</label>
+                <div class="input-group col-sm-10">
+                    <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-key"></i></div>
+                   
+					<select name="status" class="selectpicker" data-title="Status" data-style="btn-default btn-block" data-menu-style="dropdown-blue">
+					{% for NEW,USED in form.fields.status.choices %}
+					   <option value="{{ NEW}}"{% if form.fields.status.value == NEW %} selected{% endif %}>{{ USED }}</option>
+					{% endfor %}				
+					</select>
+				</div>
+            </div>
+			
+			
+			<div class="form-group row">
+                <label class="col-sm-8 col-form-label frm" for="group1B">Item Description</label>
+                <div class="input-group col-sm-10">
+                    <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-key"></i></div>
+                    <input id="item_description" class="form-control" type="text" name="item_description" required />
+                </div>
+            </div>
+			
+			
+			<div class="form-group row">
+                <label class="col-sm-8 col-form-label frm" for="group1B">Auction Bidding Price</label>
+                <div class="input-group col-sm-10">
+                    <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-key"></i></div>
+                    <input id="auction_bidding_price" class="form-control" type="number" name="auction_bidding_price" required />
+                </div>
+            </div>
+			
+			
+			
+        </div>
+            <div class="form-group row">                
+                <button id="subbut" type="submit" class="btn btn-primary col-sm-5" value="register_v2">Submit</button>
+            </div>
+        </div>
+    </div>
+    </form>
+    </div>
+{% endblock %}
+</body>
 </html>

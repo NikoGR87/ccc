@@ -1,17 +1,3 @@
-#preview_product {
-    max-height: 500px;
-    max-width: 500px;
-    margin-top: 80px;
-    margin-right: 40px;
-}
-
-#comments {
-    background: #f9f9f9;
-    width: 400px;
-    height: 100px;
-    overflow-y: scroll;
-}
-
 #bid-flexbox {
     margin-top: 20px;
 }
@@ -35,11 +21,6 @@
 {
     height: 65%;
     margin-bottom: 20px;
-}
-
-#comments
-{
-    margin-top: -80px;
 }
 
 #post_button

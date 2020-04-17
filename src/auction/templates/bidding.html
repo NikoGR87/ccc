@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Auctions Online - Item</title>
+    <title>Auctions Online - Bid for item</title>
     <link rel="stylesheet" type="text/css" href="/static/css/bidding.css">
 </head>
 	<body>
@@ -22,7 +22,7 @@
 							{% endif %}
 						</tr>
 						<tr>
-							<td><small>Current bit:</small></td>
+							<td><small>Current bid:</small></td>
 							<td><b>GB £{{stats.1}}</b></td>
 							<td><small>[ {{ auction.bids }} bids ]</small></td>
 						</tr>
@@ -35,16 +35,16 @@
 				</div>
 				{% endif %}
 				<div>
-					<button type="button" id="w_button" class="btn btn-outline-primary watch_button" onclick="location.href='/auction/monitoring/{{auctions.id}}'">
+					<button type="button" id="w_button" class="btn btn-outline-primary monitoring_button" onclick="location.href='/auction/monitoring/{{auctions.id}}'">
 						{% load custom_tags %}
 						{% if monitoring %}
 							{% if monitoring|search:auction.id%}
-								Unwatch
+								Non-Monitoring
 							{% else %}
-								Watch
+								Monitoring
 							{% endif %}
 						{% else %}
-							Watch
+							Monitoring
 						{% endif %}
 					</button>
 				</div>

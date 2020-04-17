@@ -1,32 +1,53 @@
-{% load static %} 
+<!DOCTYPE html>
 <html> 
-    <head>         
-		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">         
-		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstraptheme.min.css"> 
-        <link rel="stylesheet" type="text/css" href="{% static 'css/myapp.css' %}"> 
-    </head> 
-	
-	<body> 
-		
-		<div> <h1> Items </h1> </div> 
+	<head>         
+		<title>Auctions Online - Available Items</title>
+			<style>
+			   <link rel="stylesheet" type="text/css" href="/static/css/bidding.css">
+			</style
+	</head> 
+<body> 
+{% extends 'index.html' %}	
+{% block body %}
+<div id="reg">
+	<div>
+		<h2>Available Items</h2>
+		<hr>
+	</div>
 
-		<form method = "GET"> 
+<form method = "GET"> 
 		{{ form }} 
 		<input type = "submit" value = "Find"> 
 		</form> 
-		
-		{% for item in items%} 
-		 
 
-		Title: {{item.item_title}} <BR> 
+<div id="bid-flexbox" class="d-flex flex-row"> 
+		<div class="p-2">
+			<div id="bidding" class="jumbotron">
+				<div id="bid_table">
+				<table  class="table table-borderless">
+					<tbody>
+						<tr>
+						{% for item in items%} 
+						
+						<p><b>Title:</b> {{item.item_title}}</p>
+						
+							
+						<p><b>Status:</b> {{item.status}} </p>
+						
+							
+						<p><b>Description: </b>{{item.item_description}} </p> 
+						
+						<p><b>Owner:</b> {{item.item_owner}} </p> 
+						
+							{% endfor %}
+							</tr>						
+					</tbody>
+				</table>
+				</div>
 
-		Status: {{item.status}} <BR> 
-
-		Description: {{item.item_description}} <BR> 
-
-		Owner: {{item.item_owner}} <BR><BR> 
-
-		{% endfor %}
-
-	</body>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+</body>
 <html>

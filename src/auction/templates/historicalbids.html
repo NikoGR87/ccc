@@ -1,1 +1,40 @@
-dsfsafds
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auctions Online - Historical Bids</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/bidding.css">
+</head>
+<body>
+{% extends 'index.html' %}
+{% block body %}
+<div id="reg">
+	<div>
+		<h2>Historical Bids</h2>
+		<hr>
+	</div>
+	
+	<div id="bid-flexbox" class="d-flex flex-row"> 
+		<div class="p-2">
+			<div id="bidding" class="jumbotron">
+				<div id="bid_table">
+				<table  class="table table-borderless">
+					<tbody>
+						<tr>
+						{% for bid in bidding%} 
+						
+						<p><b>ID:</b> {{bid.user_id}}</p>
+						
+						<p><b>Item:</b> {{bid.item_name}}</p>	
+					
+						<p><b>Last Time Bid :</b> {{bid.bidding_time}}</p>
+						
+						
+							{% endfor %}
+							</tr>						
+					</tbody>
+				</div>
+			</div>
+		</div>
+{% endblock %}
+</body>
+</html>

@@ -1,27 +1,45 @@
-{% load static %} 
+<!DOCTYPE html>
 <html> 
     <head>         
-		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">         
-		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstraptheme.min.css"> 
-        <link rel="stylesheet" type="text/css" href="{% static 'css/myapp.css' %}"> 
-    </head> 
+		<title>Auctions Online - Items Sold</title>
+		<link rel="stylesheet" type="text/css" href="/static/css/bidding.css">	
+			<style>
+			   #reg { margin-top : 20px; }
+			   .frm { margin-top: -15px; }
+			</style
+	</head> 	
+<body> 
+{% extends 'index.html' %}	
+{% block body %}
+
 	
-	<body> 
+	<div id="bid-flexbox" class="d-flex flex-row"> 
+		<div class="p-2">
+			<div id="bidding" class="jumbotron">
+				<div id="bid_table">
+				<table class="table table-borderless">
+					<tbody>
+						<tr>
+						{% for auction in auctions%}
+						<td>
+						<p><b>Item Name:</b> {{auction.item_name}} </p>
+						</td>
+						{% endfor %}
+						</tr>						
+					</tbody>
+				</table>
+				</div>		
+	
 		
-		<div> <h1> Items Sold </h1> </div> 
-		
-		{% for item in items%} 
+	 
 		 
 
-		Title: {{item.item_title}} <BR> 
+	
 
-		Status: {{item.status}} <BR> 
-
-		Description: {{item.item_description}} <BR> 
-
-		Owner: {{item.item_owner}} <BR><BR> 
-
-		{% endfor %}
-
-	</body>
+	
+			</div>
+		</div>
+	</div>
+	{% endblock %}
+</body>
 <html>
