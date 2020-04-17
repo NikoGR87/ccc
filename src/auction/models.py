@@ -66,6 +66,10 @@ class Bidding(models.Model):
     
     item_name = models.CharField(max_length=60,default='')
     
+    auction_winner = models.CharField(max_length=60,default='')
+    
+    item_owner = models.CharField(max_length=60,default='')
+    
 class Monitoring(models.Model):
 
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)

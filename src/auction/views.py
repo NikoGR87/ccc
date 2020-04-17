@@ -99,12 +99,42 @@ def bid_page(request, auction_id):
             latest_bid = Bidding.objects.all().order_by('-bidding_time')
             if latest_bid:
                 winner = User.objects.filter(id=latest_bid[0].user_id.id)
+                
+                ##################
+               
+                t = Auctions.objects.filter(id=auction_id)   
+                for a in t:        
+                    i = Items.objects.filter(id=a.item_id.id).values('item_title')       
+                    a.item_name = i
+                    a.auction_winner = winner[0].username
+                    a.auction_status = "COMPLETED" 
+                    a.save() # this will update only
+
+                if request.session['username']:
+                    user = User.objects.get(username=request.session['username'])
+                biddings = Bidding.objects.filter(user_id = user.id)
+                for a in biddings:
+                    i = Items.objects.filter(id=a.item_id.id).values('item_title') 
+                    a.item_name = i 
+                    a.auction_winner = winner[0].username
+                    a.save() # this will update only
+                
+                if request.session['username']:
+                    user = User.objects.get(username=request.session['username'])
+                biddings = Bidding.objects.filter(user_id = user.id)
+                for a in biddings:
+                    i = Items.objects.filter(id=a.item_id.id).values('item_owner') 
+                    a.item_name = i  
+                    a.save() # this will update only
+                        
+                ####################################
+                
                 stats.append(winner[0].username)
             else:
                 stats.append(None)
        
             # Getting user's monitoring.
-            w = Monitoring.objects.filter(user_id=user[0])
+            w = Monitoring.objects.filter(user_id=user.id)
             monitoring = Auctions.objects.none()
             for item in w:
                 a = Auctions.objects.filter(id=item.auction_id.id)
@@ -113,7 +143,7 @@ def bid_page(request, auction_id):
             return render(request, 'bidding.html',
             {
                 'auctions': auctions[0],
-                'user': user[0],
+                'user': user,
                 'stats': stats,
                 'monitoring':monitoring
             })
@@ -318,7 +348,7 @@ def items_page(request):
             auction.auction_bidding_price = form.cleaned_data['auction_bidding_price']
             auction.time_start  = timezone.now() + timedelta(minutes=1)
             auction.time_left = item.auction_expiration_time
-            auction.auction_status = 'OPEN'
+            auction.auction_status = 'OFFERS'
             auction.save()
                       
             messages.success(request, 'Item and auction created!')
@@ -384,12 +414,12 @@ def itemssold_page(request):
     
     
     
-    t = Auctions.objects.filter(time_left__lte = datetime.now(), auction_status="OFFERS")    
-    for a in t:        
-        i = Items.objects.filter(id=a.item_id.id).values('item_title')       
-        a.item_name = i
-        a.auction_status = "COMPLETED" # change field
-        a.save() # this will update only
+    #t = Auctions.objects.filter(time_left__lte = datetime.now(), auction_status="OFFERS")    
+    #for a in t:        
+     #   i = Items.objects.filter(id=a.item_id.id).values('item_title')       
+     #   a.item_name = i
+     #   a.auction_status = "COMPLETED" # change field
+     #   a.save() # this will update only
     
  
     b = Auctions.objects.filter(auction_status="COMPLETED")        
@@ -399,20 +429,22 @@ def itemssold_page(request):
 def historicalbids_page(request):
 
     if request.session['username']:
-            user = User.objects.get(username=request.session['username'])
-    
-    usercondition = request.session['username']
-    
-    biddings = Bidding.objects.filter(user_id = user.id)
-    for a in biddings:
-        i = Items.objects.filter(id=a.item_id.id).values('item_title') 
-        a.item_name = i 
-        a.save() # this will update only
-    
-    bidel = Bidding.objects.filter(user_id = user.id)
+        user = User.objects.get(username=request.session['username'])
     
     
-    return render(request,'historicalbids.html',{'bidding':bidel,'user': user}) 
+    bidel = Bidding.objects.filter(item_owner = user.username)
+    
+  
+    return render(request,'historicalbids.html',{'bidding':bidel,'user': user})
+
+def please_delete(request):
+
+    Items.objects.all().delete()
+    Auctions.objects.all().delete()
+
+    print('success')
+    return render(request, 'index.html')
+        
 
 
     

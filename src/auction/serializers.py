@@ -34,7 +34,7 @@ class BiddingSerializer(serializers.ModelSerializer):
       
        model = Bidding
       
-       fields = ('auction_id','user_id','item_id','bidding_time','item_name')
+       fields = ('auction_id','user_id','item_id','bidding_time','item_name','auction_winner','item_owner')
        
 class MonitoringSerializer(serializers.ModelSerializer):
    

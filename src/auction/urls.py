@@ -31,6 +31,8 @@ urlpatterns = [
         
         path('auction/itemssold/', views.itemssold_page, name='itemssold_view'),
         
-        path('auction/historicalbids/', views.historicalbids_page, name='historicalbids_view'),   
+        path('auction/historicalbids/', views.historicalbids_page, name='historicalbids_view'),
+
+        path('auction/delete/', views.please_delete, name='delete_view'),
        
 ]

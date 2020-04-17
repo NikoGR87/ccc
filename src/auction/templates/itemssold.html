@@ -23,6 +23,11 @@
 						{% for auction in auctions%}
 						<td>
 						<p><b>Item Name:</b> {{auction.item_name}} </p>
+						
+						<p><b>Auction Winner:</b> {{auction.auction_winner}} </p>
+						
+						<p><b>Bidding price:</b> {{auction.auction_bidding_price}} </p>
+						
 						</td>
 						{% endfor %}
 						</tr>						
