@@ -1,48 +1,29 @@
-#preview_product {
-    max-height: 500px;
-    max-width: 500px;
-    margin-top: 80px;
-    margin-right: 40px;
+.container {
+    margin-top: 30px;
+}
+            
+.row {
+    margin-top: 30px;
+}
+                   
+.carousel-inner .active,
+.carousel-inner .active + .carousel-item,
+.carousel-inner .active + .carousel-item + .carousel-item,
+.carousel-inner .active + .carousel-item + .carousel-item + .carousel-item,
+.carousel-inner .active + .carousel-item + .carousel-item + .carousel-item + .carousel-item, 
+.carousel-inner .active + .carousel-item + .carousel-item + .carousel-item + .carousel-item + .carousel-item {   
+	
+	display: block;
 }
 
-#comments {
-    background: #f9f9f9;
-    width: 400px;
-    height: 100px;
-    overflow-y: scroll;
-}
-
-#bid-flexbox {
+.place_bid_button
+{
+    width: 100%; 
     margin-top: 20px;
 }
-
-#b_button {
-    width: 100%;
-}
-
-#w_button {
-    width: 100%;
-    margin-top: 5px;
-    background: white;
-}
-
-#bid_table
+        
+.monitoring_button
 {
-    margin-top: -50px;
-}
-
-#bidding
-{
-    height: 65%;
-    margin-bottom: 20px;
-}
-
-#comments
-{
-    margin-top: -80px;
-}
-
-#post_button
-{
-    width: 100%;
+    width: 100%; 
+    margin-top: 10px;
 }

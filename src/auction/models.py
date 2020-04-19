@@ -35,8 +35,6 @@ class Auctions(models.Model):
        
     auction_bidding_price = models.IntegerField()
     
-    user_bidding = models.CharField(max_length=60)
-    
     auction_status = models.CharField( 
         max_length = 20, 
         choices = STATUS_AUCTIONS_CHOICES, 

@@ -25,7 +25,7 @@ class AuctionsSerializer(serializers.ModelSerializer):
     
         model = Auctions
         
-        fields = ('auction_bidding_price', 'user_bidding','auction_status','time_start','time_left','auction_winner','item_id','bids','item_name') 
+        fields = ('auction_bidding_price','auction_status','time_start','time_left','auction_winner','item_id','item_name','bids',) 
 
 
 class BiddingSerializer(serializers.ModelSerializer):

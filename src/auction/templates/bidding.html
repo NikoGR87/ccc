@@ -3,64 +3,55 @@
 <head>
     <title>Auctions Online - Bid for item</title>
     <link rel="stylesheet" type="text/css" href="/static/css/bidding.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/auctions.css">
 </head>
-	<body>
-	{% extends 'index.html' %}
-	{% block body %}
-	<div id="bid-flexbox" class="d-flex flex-row"> 
-		<div class="p-2">
-			<div id="bidding" class="jumbotron">
-				<div id="bid_table">
-				<table  class="table table-borderless">
-					<tbody>
-						<tr>
-							{% if stats.2 %}
-							<td><small>Time left:</small></td>
-							<td>{{ stats.0 }}</td>
-							{% else %}
-							<p>Auction Ended! The winner is : {{ stats.3 }}</p>
-							{% endif %}
-						</tr>
-						<tr>
-							<td><small>Current bid:</small></td>
-							<td><b>GB £{{stats.1}}</b></td>
-							<td><small>[ {{ auction.bids }} bids ]</small></td>
-						</tr>
-					</tbody>
-				</table>
-				</div>
-				{% if stats.2 %}
-				<div>
-					<button type="button" id="b_button" class="btn btn-primary" onclick="location.href='/auction/bidding/{{auctions.id}}/raise_bid'">Bid</button>
-				</div>
-				{% endif %}
-				<div>
-					<button type="button" id="w_button" class="btn btn-outline-primary monitoring_button" onclick="location.href='/auction/monitoring/{{auctions.id}}'">
-						{% load custom_tags %}
-						{% if monitoring %}
-							{% if monitoring|search:auction.id%}
-								Non-Monitoring
-							{% else %}
-								Monitoring
-							{% endif %}
+<body>
+{% extends 'index.html' %}
+{% block body %}
+<div id="bidding-flexbox" class="d-flex flex-row"> 
+	<div class="p-2">
+		<div id="bidding" class="jumbotron">
+			<div id="bidding_table">
+			<table  class="table table-borderless">
+				<tbody>
+					<tr>
+						{% if possible_winner.2 %}
+						<td><small>Time left:</small></td>
+						<td>{{ possible_winner.0 }}</td>
+						{% else %}
+						<p>End of Auction! Auction winner : {{ possible_winner.3 }}</p>
+						{% endif %}
+					</tr>
+					<tr>
+						<td><small>Actual bid:</small></td>
+						<td><b>GB £{{possible_winner.1}}</b></td>
+						<td><small> {{ auction.bids }} </small></td>
+					</tr>
+				</tbody>
+			</table>
+			</div>
+			{% if possible_winner.2 %}
+			<div>
+				<button type="button" id="b_button" class="btn btn-primary" onclick="location.href='/auction/bidding/{{auctions.id}}/raising_bidding'">Bid</button>
+			</div>
+			{% endif %}
+			<div>
+				<button type="button" id="m_button" class="btn btn-outline-primary monitoring_button" onclick="location.href='/auction/monitoring/{{auctions.id}}'">
+					{% load custom_tags %}
+					{% if monitoring %}
+						{% if monitoring|search:auction.id%}
+							Non-Monitoring
 						{% else %}
 							Monitoring
 						{% endif %}
-					</button>
-				</div>
+					{% else %}
+						Monitoring
+					{% endif %}
+				</button>
 			</div>
 		</div>
 	</div>
-	{% endblock %}
-
-	{% if form.errors %}
-		{% for field in form %}
-			{% for error in field.errors %}
-				<p> {{ error }} </p>
-			{% endfor %}
-		{% endfor %}
-	{% endif %}	
-
-
-	</body>
+</div>
+{% endblock %}
+</body>
 </html>

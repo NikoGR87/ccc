@@ -23,11 +23,13 @@ urlpatterns = [
         
         path('auction/bidding/<int:auction_id>/', views.bid_page, name='bid_page'),
     
-        path('auction/bidding/<int:auction_id>/raise_bid/', views.raise_bid, name='raise_bid'),
+        path('auction/bidding/<int:auction_id>/raising_bidding/', views.raising_bidding, name='raising_bidding'),
         
         path('auction/items/', views.items_page, name='items_view'),
         
         path('auction/availableitems/', views.availableitems, name='availableitems_view'),
+        
+        path('auction/searchitems/', views.searchitems, name='searchitems_view'),
         
         path('auction/itemssold/', views.itemssold_page, name='itemssold_view'),
         

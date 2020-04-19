@@ -11,11 +11,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
 
-	<!-- MODAL related - Login -->
-	<link rel="stylesheet" type="text/css" href="/static/css/modal.css">
-	<!-- <link href="https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed" rel="stylesheet"> -->
+	<!-- Login -->
+	<link rel="stylesheet" type="text/css" href="/static/css/login.css">
+	
 
-    <!-- PAGE CSS -->
+    <!-- Index CSS -->
     <link rel="stylesheet" type="text/css" href="/static/css/index.css">    
     
 </head>
@@ -37,11 +37,15 @@
                 <a class="nav-link" href="/auction/category/used/">Used</a>
             </li>     
 			<li class="nav-item">
-                <a class="nav-link" href="/auction/items/">Items</a>
+                <a class="nav-link" href="/auction/items/">Create Item and Auction</a>
             </li>
 			<li class="nav-item">
                 <a class="nav-link" href="/auction/availableitems/">Items Available</a>
             </li>
+			<li class="nav-item">
+                <a class="nav-link" href="/auction/searchitems/">Search Items</a>
+            </li>
+			
 			<li class="nav-item">
                 <a class="nav-link" href="/auction/itemssold/">Items Sold</a>
             </li>
@@ -51,7 +55,6 @@
 			<li class="nav-item">
                 <a class="nav-link" href="/auction/delete/">Delete</a>
             </li>
-		
 		</ul>
         
         <ul id="right_navbar" class="navbar-nav ml-auto">
@@ -64,16 +67,16 @@
                 <a id="login" href="#myModal" class="nav-link trigger-btn" data-toggle="modal">Login</a>
             </li>
             <li class="nav-item">
-                <a id="signup" class="nav-link" href="/auction/registration/">Sign up</a>
+                <a id="signup" class="nav-link" href="/auction/registration/">Register</a>
             </li>
             {% endif %}
         </ul>
     </nav>
 	
-	<!-- Ad and replacement -->
+	<!-- Placeholder -->
     <div class="d-flex justify-content-center">
         <div class="p-2">
-            <div id="replacement">
+            <div id="placeholder">
                 {% block body %}
 								{% include "auctions.html" %}
                 {% endblock %}
@@ -87,7 +90,7 @@
 		<p>Welcome, new user. Please log in.</p>
 	{% endif %}
    
-	<!-- Login MODAL -->
+	<!-- Login -->
 	<div id="myModal" class="modal fade text-center">
         <div class="modal-dialog">
             <div class="col-lg-8 col-sm-8 col-12 main-section">

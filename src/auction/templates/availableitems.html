@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html> 
-	<head>         
-		<title>Auctions Online - Available Items</title>
-			<style>
-			   <link rel="stylesheet" type="text/css" href="/static/css/bidding.css">
-			</style
-	</head> 
+<head>         
+	<title>Auctions Online - Available Items</title>
+		<style>		
+        #reg {margin-top: 10px;} 
+		<link rel="stylesheet" type="text/css" href="/static/css/bidding.css">
+		</style>
+</head> 
 <body> 
 {% extends 'index.html' %}	
 {% block body %}
@@ -20,31 +21,23 @@
 		<input type = "submit" value = "Find"> 
 		</form> 
 
-<div id="bid-flexbox" class="d-flex flex-row"> 
-		<div class="p-2">
+	<div id="bidding-flexbox" class="d-flex flex-row"> 
+		<div class="p-3">
 			<div id="bidding" class="jumbotron">
-				<div id="bid_table">
-				<table  class="table table-borderless">
-					<tbody>
-						<tr>
-						{% for item in items%} 
-						
-						<p><b>Title:</b> {{item.item_title}}</p>
-						
-							
-						<p><b>Status:</b> {{item.status}} </p>
-						
-							
-						<p><b>Description: </b>{{item.item_description}} </p> 
-						
-						<p><b>Owner:</b> {{item.item_owner}} </p> 
-						
+				<div id="bidding_table">
+					<table  class="table table-borderless">
+						<tbody>
+							<tr>
+							{% for item in items%} 
+							<p><b>Title:</b> {{item.item_title}}</p>	
+							<p><b>Status:</b> {{item.status}} </p>	
+							<p><b>Description: </b>{{item.item_description}} </p> 
+							<p><b>Owner:</b> {{item.item_owner}} </p> 
 							{% endfor %}
 							</tr>						
-					</tbody>
-				</table>
+						</tbody>
+					</table>
 				</div>
-
 			</div>
 		</div>
 	</div>

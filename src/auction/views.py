@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.utils import timezone
 from datetime import datetime, timedelta
 from itertools import chain
-from auction.functions import increase_bid, remaining_time, validate_login 
+from auction.functions import increase_bidding, remaining_time, validate_login 
 from auction.forms import *
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -81,27 +81,24 @@ def bid_page(request, auction_id):
                 return index(request)
             user = User.objects.filter(username=request.session['username'])
 
-            stats = []
+            possible_winner = []
             time_left, expired = remaining_time(auctions[0])
-            stats.append(time_left) # First element in stats list
+            possible_winner.append(time_left) # First element in possible_winner list
 
             current_cost = 0.20 + (auctions[0].bids * 0.20)
             current_cost = "%0.2f" % current_cost
-            stats.append(current_cost)
+            possible_winner.append(current_cost)
 
-            # Second element in stats list
+            # Second element in possible_winner list
             if expired < 0: # if auction ended append false.
-                stats.append(False)
+                possible_winner.append(False)
             else:
-                stats.append(True)
+                possible_winner.append(True)
 
-            # Third element in stats list
+            # Third element in possible_winner list
             latest_bid = Bidding.objects.all().order_by('-bidding_time')
             if latest_bid:
-                winner = User.objects.filter(id=latest_bid[0].user_id.id)
-                
-                ##################
-               
+                winner = User.objects.filter(id=latest_bid[0].user_id.id)               
                 t = Auctions.objects.filter(id=auction_id)   
                 for a in t:        
                     i = Items.objects.filter(id=a.item_id.id).values('item_title')       
@@ -109,7 +106,6 @@ def bid_page(request, auction_id):
                     a.auction_winner = winner[0].username
                     a.auction_status = "COMPLETED" 
                     a.save() # this will update only
-
                 if request.session['username']:
                     user = User.objects.get(username=request.session['username'])
                 biddings = Bidding.objects.filter(user_id = user.id)
@@ -124,16 +120,16 @@ def bid_page(request, auction_id):
                 biddings = Bidding.objects.filter(user_id = user.id)
                 for a in biddings:
                     i = Items.objects.filter(id=a.item_id.id).values('item_owner') 
-                    a.item_name = i  
+                    a.item_owner = i  
                     a.save() # this will update only
-                        
-                ####################################
-                
-                stats.append(winner[0].username)
+ 
+                possible_winner.append(winner[0].username)
             else:
-                stats.append(None)
+                possible_winner.append(None)
        
             # Getting user's monitoring.
+            if request.session['username']:
+                user = User.objects.get(username=request.session['username'])
             w = Monitoring.objects.filter(user_id=user.id)
             monitoring = Auctions.objects.none()
             for item in w:
@@ -144,7 +140,7 @@ def bid_page(request, auction_id):
             {
                 'auctions': auctions[0],
                 'user': user,
-                'stats': stats,
+                'possible_winner': possible_winner,
                 'monitoring':monitoring
             })
     except KeyError:
@@ -152,8 +148,10 @@ def bid_page(request, auction_id):
 
     return index(request)
 
-def raise_bid(request, auction_id):
+def raising_bidding(request, auction_id):
    
+    # Raise the bids of auctions 
+    
     auction = Auctions.objects.get(id=auction_id)
     
     if auction.time_left < timezone.now():
@@ -183,14 +181,16 @@ def raise_bid(request, auction_id):
             
             latest_bid = Bidding.objects.filter(auction_id=auction.id).order_by('-bidding_time')
             if not latest_bid:
-                increase_bid(user, auction)
+                increase_bidding(user, auction)
             else:
                 current_winner = User.objects.filter(id=latest_bid[0].user_id.id)
                 if current_winner[0].id != user.id:
-                    increase_bid(user, auction)
+                    increase_bidding(user, auction)
 
             return bid_page(request, auction_id)
+    
     except KeyError:
+        
         return index(request)
 
     return bid_page(request, auction_id)
@@ -267,6 +267,7 @@ def filter_auctions(request, category):
     return index(request)            
 
 def login_page(request):
+    
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -280,6 +281,7 @@ def login_page(request):
     return index(request)
 
 def logout_page(request):
+    
     try:
         del request.session['username']
     except:
@@ -293,7 +295,7 @@ def registration_page(request):
     
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def registration(request):
+def registration(request):   
     CLIENT_ID = '9dGBsdHYqLICRZC4gKoNa57dkiHPIvh4PtxXZ0l5'
     CLIENT_SECRET = 'OU3LF7o9xGd1TuRvi5UBnrrUUQdd96uPBWqISAltkWArg4M8vANV0gSYplQ0uPtltcR71mjguqyS3axJKqPwMrFibr7SWVAQ4rC8QZzDMvcRNWnFuQJAvfd4fL3iyCyR'
 
@@ -328,119 +330,165 @@ def registration(request):
     #return render('User already exists')
 
 def items_page(request):
-    item = Items()
-    if request.method == 'POST':
-        form = ItemsForm(request.POST)
-        if form.is_valid():
-            
-            item.item_title  =   form.cleaned_data['item_title'] 
-            item.item_description  =  form.cleaned_data['item_description']           
-            item.status  =  form.cleaned_data['status']
-            item.auction_expiration_time = timezone.now() + timedelta(minutes=360)
-            user = User.objects.get(username=request.session['username'])
-            item.item_owner = user.username
-            item.save() 
-            
-            auction = Auctions()
-            i = Items.objects.filter(id=item.id)
-            auction.item_id = i[0]
-            auction.bids = 0
-            auction.auction_bidding_price = form.cleaned_data['auction_bidding_price']
-            auction.time_start  = timezone.now() + timedelta(minutes=1)
-            auction.time_left = item.auction_expiration_time
-            auction.auction_status = 'OFFERS'
-            auction.save()
-                      
-            messages.success(request, 'Item and auction created!')
-            return HttpResponseRedirect('http://193.61.36.93:8000/')
     
-    else:
-        placeholder1 = ''
-        placeholder2 = ''
-        placeholder3 = ''
-        placeholder4 = ''
-        placeholder5 = ''
-        form = ItemsForm(initial={'item_title': placeholder1,'item_description': placeholder2,'item_owner ': placeholder3,'status':placeholder4,'auction_bidding_price':placeholder5})  
-       
-    if request.session['username']:
+    try:
+        if request.session['username']:
             user = User.objects.get(username=request.session['username'])
     
-    context = {
-        'form': form,
-        'item': item,
-        'user': user
-    }        
+        item = Items()
+        if request.method == 'POST':
+            form = ItemsForm(request.POST)
+            if form.is_valid():
+                
+                item.item_title  =   form.cleaned_data['item_title'] 
+                item.item_description  =  form.cleaned_data['item_description']           
+                item.status  =  form.cleaned_data['status']
+                item.auction_expiration_time = timezone.now() + timedelta(minutes=2)
+                user = User.objects.get(username=request.session['username'])
+                item.item_owner = user.username
+                item.save() 
+                
+                auction = Auctions()
+                i = Items.objects.filter(id=item.id)
+                auction.item_id = i[0]
+                auction.bids = 0
+                auction.auction_bidding_price = form.cleaned_data['auction_bidding_price']
+                auction.time_start  = timezone.now() + timedelta(minutes=1)
+                auction.time_left = item.auction_expiration_time
+                auction.auction_status = 'OFFERS'
+                auction.save()
+                          
+                messages.success(request, 'Item and auction created!')
+                return HttpResponseRedirect('http://193.61.36.93:8000/')
+        
+        else:
+            placeholder1 = ''
+            placeholder2 = ''
+            placeholder3 = ''
+            placeholder4 = ''
+            placeholder5 = ''
+            form = ItemsForm(initial={'item_title': placeholder1,'item_description': placeholder2,'item_owner ': placeholder3,'status':placeholder4,'auction_bidding_price':placeholder5})  
+           
+        if request.session['username']:
+                user = User.objects.get(username=request.session['username'])
+        
+        context = {
+            'form': form,
+            'item': item,
+            'user': user
+        }        
 
-    return render(request, 'items.html',context)
+        return render(request, 'items.html',context)
+    
+    except KeyError:
+        
+        return render(request, 'index.html')
+    
+    return render(request, 'index.html')
      
+
+def searchitems(request):
+
+    try:    
+        
+        if request.session['username']:
+                user = User.objects.get(username=request.session['username'])
+    
+        
+        items = Items.objects.all()
+        
+        context = {
+                'items': items,
+                'user': user
+            }
+        
+        return render(request, 'searchitems.html',context)
+        
+    except KeyError:
+        
+        return render(request, 'index.html')
+    
+    return render(request, 'index.html')
+
 def availableitems(request): 
      
-    if request.session['username']:
-            user = User.objects.get(username=request.session['username'])
-    
-    form = ItemsFilterForm()
-    if form.is_valid():
-        test = form.cleaned_data['select_user']
-        items_list = Items.objects.filter(item_owner = test)     
-    
-        return render(request,'availableitems.html',{'form' : form,'items': items_list}) 
-    else:       
-        placeholder = User.objects.all()
-        form = ItemsFilterForm(initial={'select_user': placeholder})
-        form = ItemsFilterForm(request.GET)
-        if form.is_valid():
-            test = form.cleaned_data['select_user']          
-            items_list = Items.objects.filter(item_owner = test) 
-    
-    if form.is_valid():       
-        context = {
-            'form': form,
-            'items': items_list,
-            'user': user
-        }
-    else:
-        context = {
-            'form': form,
-            'user': user
-        }
+    try:    
         
-    return render(request, 'availableitems.html',context)
-
+        if request.session['username']:
+                user = User.objects.get(username=request.session['username'])
+        
+        form = ItemsFilterForm()
+        if form.is_valid():
+            test = form.cleaned_data['select_user']
+            items_list = Items.objects.filter(item_owner = test)     
+        
+            return render(request,'availableitems.html',{'form' : form,'items': items_list}) 
+        else:       
+            placeholder = User.objects.all()
+            form = ItemsFilterForm(initial={'select_user': placeholder})
+            form = ItemsFilterForm(request.GET)
+            if form.is_valid():
+                test = form.cleaned_data['select_user']          
+                items_list = Items.objects.filter(item_owner = test) 
+        
+        if form.is_valid():       
+            context = {
+                'form': form,
+                'items': items_list,
+                'user': user
+            }
+        else:
+            context = {
+                'form': form,
+                'user': user
+            }
+            
+        return render(request, 'availableitems.html',context)
+        
+    except KeyError:
+        
+        return render(request, 'index.html')
+    
+    return render(request, 'index.html')
 
 def itemssold_page(request):
        
-    if request.session['username']:
-            user = User.objects.get(username=request.session['username'])
+    try:
     
+        if request.session['username']:
+                user = User.objects.get(username=request.session['username'])
+
+        b = Auctions.objects.filter(auction_status="COMPLETED")        
+        
+        return render(request, 'itemssold.html',{'auctions': b,'user': user})
+        
+    except KeyError:
+        
+        return render(request, 'index.html')
     
-    
-    #t = Auctions.objects.filter(time_left__lte = datetime.now(), auction_status="OFFERS")    
-    #for a in t:        
-     #   i = Items.objects.filter(id=a.item_id.id).values('item_title')       
-     #   a.item_name = i
-     #   a.auction_status = "COMPLETED" # change field
-     #   a.save() # this will update only
-    
- 
-    b = Auctions.objects.filter(auction_status="COMPLETED")        
-    
-    return render(request, 'itemssold.html',{'auctions': b,'user': user})
+    return render(request, 'index.html')    
    
 def historicalbids_page(request):
 
-    if request.session['username']:
-        user = User.objects.get(username=request.session['username'])
+    try:
     
-    
-    bidel = Bidding.objects.filter(item_owner = user.username)
-    
-  
-    return render(request,'historicalbids.html',{'bidding':bidel,'user': user})
+        if request.session['username']:
+            user = User.objects.get(username=request.session['username'])
+           
+        biddings = Bidding.objects.filter(item_owner = user.username)
+        
+        return render(request,'historicalbids.html',{'bidding':biddings,'user': user})
+        
+    except KeyError:
+        
+        return render(request, 'index.html')
 
 def please_delete(request):
 
     Items.objects.all().delete()
     Auctions.objects.all().delete()
+    Bidding.objects.all().delete()
+    Monitoring.objects.all().delete()
 
     print('success')
     return render(request, 'index.html')
